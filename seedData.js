@@ -13,7 +13,11 @@ const seedRestaurant = [
       name: 'Spice Grill',
       location: 'Houston',
       cuisine: 'Indian'
-    }
+    },
+    // {
+    //   name: "Crust Brothers", 
+    //   location: "Shea & N. Scottsdale", 
+    //   cuisine: "Pizza"}
 ]
 
 const seedMenu = [

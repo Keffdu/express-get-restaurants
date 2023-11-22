@@ -5,69 +5,51 @@ execSync('npm run seed');
 
 const request = require("supertest")
 const { db } = require('./db/connection');
-const { Musician, Band } = require('./models/index')
+const { Restaurant } = require('./models/index')
 const app = require('./src/app');
-const seedMusician = require("./seedData");
 
 
-describe('/musicians endpoint', () => {
-    it("returns all musicians", async () => {
-        const response = await request(app).get("/musicians")
+describe('/restaurants endpoint', () => {
+    it("returns all restaurants", async () => {
+        const response = await request(app).get("/router/restaurants")
+        expect(response.body[0].name).toBe("AppleBees")
+    })
+    it("returns array", async () => {
+        const response = await request(app).get("/router/restaurants")
+        expect(Array.isArray(response.body)).toBe(true)
+    })
+    it("returns correct array length", async () => {
+        const response = await request(app).get("/router/restaurants")
         expect(response.body.length).toBe(3)
     })
    
     it("returns 200 status", async () => {
-        const response = await request(app).get("/musicians")
+        const response = await request(app).get("/router/restaurants")
         expect(response.statusCode).toBe(200)
-    })
-    
-    it("returns all musicians", async () => {
-        const response = await request(app).get("/musicians")
-        const responseData = JSON.parse(response.text)
-        expect(responseData.length).toBe(3)
-    })
-    it("Check post request, returns a new musician", async() =>{
-     const responseData = await request(app).post("/musicians").send({name: "badbunny", instrument: "micro"}).set('Accept', 'application/json')
-     expect(responseData.body.name).toBe("badbunny");
     })
 
-    it ("returns 200 status", async () =>{
-        const response = await request(app).get("/musicians/:id")
+    it("Check post request, returns a new restaurant", async() =>{
+     const response = await request(app).post("/router/restaurants").send({name: "Crust Brothers", location: "Shea & N. Scottsdale", cuisine: "Pizza"}).set('Accept', 'application/json')
+     expect(response.body.name).toBe("Crust Brothers");
+    })
+
+    it("returns a restaurant", async () => {
+        const response = await request(app).get("/router/restaurants/4")
+        expect(response.body.name).toBe("Crust Brothers")
+    })
+
+    it ("returns 200 status for single item", async () =>{
+        const response = await request(app).get("/router/restaurants/4")
         expect(response.statusCode).toBe(200)
     })
     
-    it ("checks put resquets", async () =>{
-        const responseData = await request(app).put("/musicians/4").send({name: "bad bunny"}).set('Accept', 'application/json')
-        expect(responseData.body.name).toBe("bad bunny")
+    it ("checks put request", async () =>{
+        const responseData = await request(app).put("/router/restaurants/4").send({cuisine: "all great food"}).set('Accept', 'application/json')
+        expect(responseData.body.cuisine).toBe("all great food")
     })
      
     it("checks delete request",async () =>{
-        const responseData = await request(app).del("/musicians/4")
+        const responseData = await request(app).del("/router/restaurants/1")
         expect(responseData.statusCode).toBe(200)
-    })
-})
-describe('/Bands endpoint', () => {
-    it("returns all bands", async () => {
-        const response = await request(app).get("/bands")
-        expect(response.body.length).toBe(3)
-    })
-   
-    it("returns 200 status", async () => {
-        const response = await request(app).get("/bands")
-        expect(response.statusCode).toBe(200)
-    })
-    
-    it("returns all bands", async () => {
-        const response = await request(app).get("/bands")
-        const responseData = JSON.parse(response.text)
-        expect(responseData.length).toBe(3)
-    })
-    
-})
-
-describe("test id params", () => {
-    it("returns param musician", async () => {
-        const response = await request(app).get("/musicians/1")
-        expect(response.body.name).toBe("Mick Jagger")
     })
 })

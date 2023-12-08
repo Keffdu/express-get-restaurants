@@ -5,8 +5,6 @@ const router = require("../routes/restaurants")
 
 const db = require("../db/connection");
 
-app.use(express.urlencoded({extended: true}))
-app.use(express.json())
 app.use("/router", router)
 
 

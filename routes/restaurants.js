@@ -1,9 +1,22 @@
 const { Router } = require("express")
-const Restaurant = require("../models/index")
+const express = require("express");
+const {Restaurant, Menu, Item} = require("../models/index")
 const router = Router()
+const { check, validationResult} = require("express-validator")
+
+router.use(express.json())
+router.use(express.urlencoded({extended: true}))
 
 router.get("/restaurants", async (req, res) => {
-    const allRestaurants = await Restaurant.findAll()
+    const allRestaurants = await Restaurant.findAll({
+        include: Menu,
+            include: [{
+                model: Menu,
+                include: [{
+                    model: Item
+                }]
+            }]
+    })
     res.json(allRestaurants)
 })
 
@@ -13,9 +26,19 @@ router.get("/restaurants/:id", async (req, res) => {
     res.json(restaurant)
 })
 
-router.post("/restaurants", async (req, res) => {
+router.post("/restaurants", [
+    check("name").not().isEmpty().trim(),
+    check("location").not().isEmpty().trim(),
+    check("cuisine").not().isEmpty().trim()
+], async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        res.json({error: errors.array()})
+    } else {
     const restaurant = await Restaurant.create(req.body)
-    res.json(restaurant)
+    const allRestaurants = await Restaurant.findAll()
+    res.json(allRestaurants)
+    }
 })
 
 router.put("/restaurants/:id", async (req, res) => {

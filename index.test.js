@@ -8,6 +8,10 @@ const { db } = require('./db/connection');
 const { Restaurant } = require('./models/index')
 const app = require('./src/app');
 
+afterAll(async () => {
+    await db.sync({ force: true})
+})
+
 
 describe('/restaurants endpoint', () => {
     it("returns all restaurants", async () => {
@@ -51,5 +55,15 @@ describe('/restaurants endpoint', () => {
     it("checks delete request",async () =>{
         const responseData = await request(app).del("/router/restaurants/1")
         expect(responseData.statusCode).toBe(200)
+    })
+})
+
+describe("validations", () => {
+    it("throws error with missing name field", async () => {
+        const req = await request(app)
+        .post("/router/restaurants")
+        .send({name: "hjggjhgj", location: "Shea & N. Scottsdale", cuisine: "Pizza"})
+        .set('Accept', 'application/json')
+        console.log(req)
     })
 })

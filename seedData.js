@@ -22,13 +22,16 @@ const seedRestaurant = [
 
 const seedMenu = [
   {
-    title: 'Breakfast'
+    title: 'Breakfast',
+    restaurantId: 1
   },
   {
-    title: 'Lunch'
+    title: 'Lunch',
+    restaurantId: 1
   },
   {
-    title: 'Dinner'
+    title: 'Dinner',
+    restaurantId: 3
   },
 ]
 
